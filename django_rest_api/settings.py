@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'students',
-    'api','employees','blogs',
+    'api','employees','blogs','corsheaders','django_filters'
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'django_rest_api.urls'
+
+# global pagination
+REST_FRAMEWORK ={
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.CustomPagination',
+    'PAGE_SIZE':2,
+    # the below code is to configure the filters in the application
+    'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
+    'SEARCH_PARAM':'q',
+    'ORDERING_PARAM':'order-by',
+}
 
 TEMPLATES = [
     {
@@ -113,6 +125,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+CORS_ALLOW_ALL_ORIGINS = True # only for development
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000" => this for production environment only 
+# ]
 
 
 # Static files (CSS, JavaScript, Images)

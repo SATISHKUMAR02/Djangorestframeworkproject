@@ -10,6 +10,9 @@ from django.http import Http404
 from blogs.models import *
 from rest_framework import generics,viewsets,mixins
 from blogs.serializer import *
+from .pagination import CustomPagination
+from employees.filters import EmployeeFilter
+from rest_framework.filters import SearchFilter,OrderingFilter
 """
 1) function based view
 2) class based view
@@ -61,10 +64,18 @@ from blogs.serializer import *
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    pagination_class = CustomPagination
+    filterset_class = EmployeeFilter
+    
+    
 
 class BlogView(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+    filter_backends={SearchFilter,OrderingFilter}
+    search_fields = ['blog_title','blog_body']
+    ordering_fields = {'id'}
+    
 
 class BlogDetailView(generics.DestroyAPIView,generics.UpdateAPIView,generics.RetrieveAPIView):
     queryset = Blog.objects.all()
@@ -75,11 +86,24 @@ class CommentView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommnetSerializer
     
+class CommentDetailView(generics.DestroyAPIView,generics.RetrieveAPIView,generics.UpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommnetSerializer
+    lookup_field = 'pk'
 
 
 
+"""
+PageNumberPagination => takes the page size as 10 and returns the response
+accordingly
 
+LimitOffSetPagination = > takes two parameters
+limit = > the parameter controls the count of items to see in a single page
+offset = this parameter tells the API where to start fetching from
+if offset = 0 => 1-10 and limit is 10
+offset = 10 => 11-20 and limit is 10
 
+"""
 
 
 
